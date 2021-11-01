@@ -249,7 +249,6 @@ La ruta base del servicio es ***http://54.173.202.133*** para cada ruta de ejemp
     "segundos": 12,
   }
 }
-}
 ```
 
 *Status: 404 - Not Found*
