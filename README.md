@@ -74,9 +74,9 @@ La ruta base del servicio es ***http://54.173.202.133*** para cada ruta de ejemp
 **Propiedades:**
 | Sintaxis    	| Tipo   	| Validación                               	| Requerido 	|
 |-------------	|--------	|------------------------------------------	|:---------:	|
-| titulo      	| String 	| - min 10 caracteres - max 50 caracteres  	|    [x]    	|
-| descripcion 	| String 	| - min 10 caracteres - max 250 caracteres 	|    [x]    	|
-| autor       	| String 	| - min 3 caracteres - max 250 caracteres  	|    [x]    	|
+| titulo      	| String 	| min 5 caracteres - max 50 caracteres  	|    [x]    	|
+| descripcion 	| String 	| min 10 caracteres - max 250 caracteres 	|    [x]    	|
+| autor       	| String 	| min 3 caracteres - max 250 caracteres  	|    [x]    	|
 | genero      	| String 	|                                          	|           	|
 | anio        	| Number 	|                                          	|           	|
 | paginas     	| Number 	|                                          	|           	|
@@ -120,9 +120,9 @@ La ruta base del servicio es ***http://54.173.202.133*** para cada ruta de ejemp
 **Propiedades:**
 | Sintaxis    	| Tipo   	| Validación                               	| Requerido 	|
 |-------------	|--------	|------------------------------------------	|:---------:	|
-| titulo      	| String 	| - min 10 caracteres - max 50 caracteres  	|    [x]    	|
-| descripcion 	| String 	| - min 10 caracteres - max 250 caracteres 	|    [x]    	|
-| autor       	| String 	| - min 3 caracteres - max 250 caracteres  	|    [x]    	|
+| titulo      	| String 	| min 5 caracteres - max 50 caracteres  	|    [x]    	|
+| descripcion 	| String 	| min 10 caracteres - max 250 caracteres 	|    [x]    	|
+| autor       	| String 	| min 3 caracteres - max 250 caracteres  	|    [x]    	|
 | genero      	| String 	|                                          	|           	|
 | anio        	| Number 	|                                          	|           	|
 | paginas     	| Number 	|                                          	|             |  
@@ -265,7 +265,16 @@ La ruta base del servicio es ***http://54.173.202.133*** para cada ruta de ejemp
 **`POST` Ruta:** `{{base}}/cancion/`
 
 **Propiedades:**
-
+| Sintaxis 	| Tipo     	| Validacion                              	| Requerido 	|
+|----------	|----------	|-----------------------------------------	|:---------:	|
+| titulo   	| String   	| min 5 caracteres - max 50 caracteres  	|    [x]    	|
+| autor    	| String   	| min 3 caracteres - max 250 caracteres 	|    [x]    	|
+| album    	| String   	|                                         	|           	|
+| genero   	| [String] 	|                                         	|           	|
+| anio     	| Number   	|                                         	|           	|
+| minutos  	| Number   	|                                         	|           	|
+| segundos 	| Number   	|                                         	|           	|
+</br>
 
 **Body *JSON***
 
@@ -308,7 +317,16 @@ La ruta base del servicio es ***http://54.173.202.133*** para cada ruta de ejemp
 **`PUT` Ruta:** `{{base}}/cancion/edit/{id cancion}`
 
 **Propiedades:**
-
+| Sintaxis 	| Tipo     	| Validacion                              	| Requerido 	|
+|----------	|----------	|-----------------------------------------	|:---------:	|
+| titulo   	| String   	| min 5 caracteres - max 50 caracteres  	|    [x]    	|
+| autor    	| String   	| min 3 caracteres - max 250 caracteres 	|    [x]    	|
+| album    	| String   	|                                         	|           	|
+| genero   	| [String] 	|                                         	|           	|
+| anio     	| Number   	|                                         	|           	|
+| minutos  	| Number   	|                                         	|           	|
+| segundos 	| Number   	|                                         	|           	|
+</br>
 
 **Body *JSON***
 
@@ -387,4 +405,4 @@ La ruta base del servicio es ***http://54.173.202.133*** para cada ruta de ejemp
 
 ## Playlists
 
-
+### Obtener todas las playlists
