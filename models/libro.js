@@ -3,7 +3,6 @@ const mongoose=require('mongoose');
 
 //Definir esquema
 const LibroSchema=mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     titulo:{
         type:String,
         required:true

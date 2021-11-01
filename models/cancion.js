@@ -1,27 +1,27 @@
 //Models
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 
 //Definir esquema
-const CancionSchema=mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
-    titulo:{
-        type:String,
-        required:true
-    },
-    descripcion:{
-        type:String,
-        required:true
-    },
-    autor:{
+const CancionSchema = mongoose.Schema({
+    titulo: {
         type: String,
+        required: true
     },
-    genero:{
+    autor: {
         type: String,
+        required: true
     },
-    anio:Number,
-    minutos:Number,
-    segundos:Number
-},{collection:'cancion'});
+    album: {
+        type: String
+    },
+    genero: [{
+        type: String
+    }],
+    anio: Number,
+    minutos: Number,
+    segundos: Number
+
+}, { collection: 'cancion' });
 
 //Crear modelo
-module.exports=mongoose.model('Cancion',CancionSchema);
+module.exports = mongoose.model('Cancion', CancionSchema);

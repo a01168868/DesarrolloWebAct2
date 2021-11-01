@@ -1,9 +1,8 @@
 const Libro = require("../models/libro.js");
 const mongoose = require("mongoose");
 
-exports.postAgregarLibro = async (req, res) => {
+exports.agregarLibro = async (req, res) => {
     const libro = new Libro(req.body);
-    libro._id = new mongoose.Types.ObjectId();
     try {
         await libro.save();
         console.log(libro);
@@ -16,21 +15,19 @@ exports.postAgregarLibro = async (req, res) => {
 }
 
 // GET: localhost:8081/libro/
-exports.getObtenerLibros = async (req, res) => {
+exports.obtenerLibros = async (req, res) => {
     try {
         const libros = await Libro.find();
-        if (libros) {
-            console.log(libros);
-            res.status(200).json({ Libros: libros });
-        }
+        console.log(`LibroController | obtenerLibros | Success`);
+        res.status(200).json({ Libros: libros });
     } catch (err) {
-        console.log(`LibroController | getObtenerLibros | ERROR: ${err.message}`);
+        console.log(`LibroController | obtenerLibros | ERROR: ${err.message}`);
         res.status(500).json({ message: `Ocurrio un error al obtener los libros` });
     }
 }
 
 // GET: localhost:8081/libro/:id
-exports.getObtenerLibro = async (req, res) => {
+exports.obtenerLibro = async (req, res) => {
     try {
         const { id } = req.params;
         if (id) {
@@ -44,7 +41,7 @@ exports.getObtenerLibro = async (req, res) => {
             res.status(422).json({ message: `El id es requerido para hacer la busqueda` });
         }
     } catch (err) {
-        console.log(err);
+        console.log(`LibroController | getObtenerLibro | ERROR: ${err.message}`);
         res.status(500).json({ message: `Ocurrio un error al obtener el libro` });
     }
 }
@@ -52,8 +49,8 @@ exports.getObtenerLibro = async (req, res) => {
 exports.actualizarLibro = async (req, res) => {
     try {
         const { id } = req.params
-        const libro = await Libro.findById(id);
         if (id) {
+            const libro = await Libro.findById(id);
             if (libro) {
                 await Libro.findByIdAndUpdate(id,
                     {
@@ -85,25 +82,25 @@ exports.actualizarLibro = async (req, res) => {
 /*
 POST: localhost:8081/libro/:id
 */
-exports.deleteLibro = async (req, res) => {
+exports.eliminarLibro = async (req, res) => {
     try {
         const { id } = req.params
         const libro = await Libro.findById(id);
         if (id) {
             if (libro) {
                 await Libro.findByIdAndRemove(id);
-                console.log("LibroController | deleteLibro | Success")
+                console.log("LibroController | eliminarLibro | Success")
                 res.status(200).json({ entity: libro });
             } else {
-                console.log(`LibroController | deleteLibro | Not Found id: ${id}`)
+                console.log(`LibroController | eliminarLibro | Not Found id: ${id}`)
                 res.status(404).json({ message: `No se encontró ningún libro con el id: ${id}` });
             }
         } else {
-            console.log(`LibroController | actualizarLibro | Not Found id: ${id}`)
+            console.log(`LibroController | eliminarLibro | Not Found id: ${id}`)
             res.status(422).json({ message: `El id es requerido para hacer la busqueda` });
         }
     } catch (err) {
-        console.log(`LibroController | deleteLibro | ERROR: ${err}`);
+        console.log(`LibroController | eliminarLibro | ERROR: ${err}`);
         res.status(500).json({ message: `Ocurrio un error al eliminar el libro` });
     }
 }
