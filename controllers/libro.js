@@ -1,5 +1,5 @@
 const Libro = require("../models/libro.js");
-const mongoose = require("mongoose");
+
 
 exports.agregarLibro = async (req, res) => {
     const libro = new Libro(req.body);

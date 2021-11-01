@@ -5,10 +5,14 @@ const mongoose = require('mongoose');
 const CancionSchema = mongoose.Schema({
     titulo: {
         type: String,
+        minlength: [5, 'Min length is 5 characters'],
+        maxlength: [50, 'Max length is 50 characters'],
         required: true
     },
     autor: {
         type: String,
+        minlength: [3, 'Min length is 3 characters'],
+        maxlength: [250, 'Max length is 250 characters'],
         required: true
     },
     album: {
