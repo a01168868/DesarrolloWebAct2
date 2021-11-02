@@ -25,7 +25,7 @@ exports.obtenerCanciones = async (req, res) => {
         res.status(200).json({ Canciones: canciones });
     } catch (err) {
         console.log(`CancionController | obtenerCanciones | ERROR: ${err}`);
-        res.status(500).json({ message: `Ocurrio un error al crear la canción` });
+        res.status(500).json({ message: `Ocurrio un error al obtener las canciones` });
     }
 }
 
@@ -109,6 +109,6 @@ exports.eliminarCancion = async (req, res) => {
         }
     } catch (err) {
         console.log(`CancionController | eliminarCancion | ERROR: ${err.message}`);
-        res.status(500).json({ message: `Ocurrio un error al actualizar la canción` });
+        res.status(500).json({ message: `Ocurrio un error al eliminar la canción` });
     }
 }

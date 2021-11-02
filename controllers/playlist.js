@@ -3,27 +3,41 @@ const Cancion = require("../models/cancion.js");
 const Libro = require("../models/libro.js");
 const mongoose = require("mongoose");
 
-/*
-POST: localhost:8081/playlist/agregar
-{
-    "titulo": "Música para el rato",
-    "descripcion": "Esta es música para solo un rato",
-    "elementos":[
-        {
-            "_id":["616df9c1bc51f241c7869426","616e05037968f7173d365610"],
-            "tipo":"Canción"
-        },
-        {
-            "_id":["616e10d260f623a12d92ab79","616e0fcd3dcf8dd05e517f34"],
-            "tipo":"Libro"
-        },
-        {
-            "_id":["616e05817968f7173d365614"],
-            "tipo":"Canción"
-        }
-    ]
+
+exports.obtenerPlayLists = async (req, res) => {
+    try {
+        const playlist = await PlayList.find();
+        console.log("PlaylistController | obtenerPlayLists | Success");
+        res.status(200).json({ PlayLists: playlist });
+    } catch (err) {
+        console.log(`PlaylistController | obtenerPlayLists | ERROR: ${err}`);
+        res.status(500).json({ message: `Ocurrio un error al obtenr las playlists` });
+    }
 }
-*/
+
+
+exports.obtenerPlayList = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (id) {
+            const playlist = await PlayList.findById(id);
+            if (playlist) {
+                console.log("PlaylistController | obtenerPlayList | Success");
+                res.status(200).json({ entity: playlist });
+            } else {
+                res.status(404).json({ message: `No se encontró ninguna playlist con el id: ${id}` });
+            }
+        } else {
+            console.log("PlaylistController | obtenerPlayList | Bad Request");
+            res.status(422).json({ message: `El id es requerido para hacer la busqueda` });
+        }
+    } catch (err) {
+        console.log(`PlaylistController | obtenerPlayList | ERROR: ${err.message}`);
+        res.status(500).json({ message: `Ocurrio un error al obtener la playlist` });
+    }
+}
+
+
 exports.agregarPlayList = async (req, res) => {
     const el = req.body.elementos;
     const error = 0;
@@ -31,6 +45,8 @@ exports.agregarPlayList = async (req, res) => {
     var cancionesAr = [];
     var libros = [];
     var librosAr = [];
+
+    { }
 
     //Obtiene datos completos de cada elemento
     try {
@@ -49,101 +65,106 @@ exports.agregarPlayList = async (req, res) => {
                 error = 1;
             }
         }
-    } catch (err) {
-        console.log(err);
-        error = 1;
-        res.json({ operacion: "Incorrecta" });
-    }
-    if (error == 0) {
-        const playlist = new PlayList(
-            {
-                "titulo": req.body.titulo,
-                "descripcion": req.body.descripcion,
-                "canciones": cancionesAr,
-                "libros": librosAr
+        if (error == 0) {
+            const { titulo, descripcion } = req.body;
+
+            if (!titulo || titulo.length < 5) {
+                console.log("PlaylistController | agregarPlayList | Bad Request");
+                res.status(422).json({ message: `El titulo es requerido` });
             }
-        );
-        playlist._id = new mongoose.Types.ObjectId();
-        try {
-            //Agregar documento a la colección
-            await playlist.save();
-            console.log(playlist);
-            console.log("PlayList Registrada");
-            res.send({ operacion: "Correcta" });
-        } catch (err) {
-            console.log(err);
-            res.send({ operacion: "Incorrecta :(" });
+            else if (!descripcion || descripcion.length < 10) {
+                console.log("PlaylistController | agregarPlayList | Bad Request");
+                res.status(422).json({ message: `La descripcion es requerida` });
+            }
+            else {
+                const playlist = new PlayList(
+                    {
+                        "titulo": titulo,
+                        "descripcion": descripcion,
+                        "canciones": canciones,
+                        "libros": libros
+                    }
+                );
+                await playlist.save((err, result) => {
+                    if (err) throw err;
+                    console.log("PlaylistController | agregarPlayList | Success | Entity:", result);
+                    res.status(200).send({ entity: result });
+                });
+            }
+        } else {
+            console.log(error);
+            res.status(422).json({ message: `Ocurrio un error agregar la playlist` });
         }
-    } else {
-        console.log(error);
-        res.send({ operacion: "Incorrecta :(" });
-    }
-}
-
-
-
-// GET: localhost:8081/playlist/obtenerTodo
-exports.obtenerPlayLists = async (req, res) => {
-    const playlist = await PlayList.find();
-    console.log(playlist);
-    res.json(playlist);
-}
-
-
-
-// GET: localhost:8081/playlist/obtener/616e2782d72a66364709c5c5
-exports.obtenerPlayList = async (req, res) => {
-    try {
-        const playlist = await PlayList.findById(req.params.id);
-        console.log("FindById Exitoso");
-        res.json(playlist);
     } catch (err) {
-        console.log(err);
-        res.json({ operacion: "Incorrecta" });
+        console.log(`PlaylistController | agregarPlayList | ERROR: ${err.message}`);
+        res.status(500).json({ message: `Ocurrio un error agregar la playlist` });
     }
 }
 
 
-
-/*
-POST: localhost:8081/playlist/actualizar
-{
-    "id_objetivo": "616e2782d72a66364709c5c5",
-    "titulo": "Modificando PlayList :D",
-    "descripcion": "Esta es una asdf ificada :D"
-}
-*/
 exports.actualizarPlayList = async (req, res) => {
     try {
-        await PlayList.findByIdAndUpdate(req.body.id_objetivo,
-            {
-                "titulo": req.body.titulo,
-                "descripcion": req.body.descripcion
+        const { id } = req.params
+        if (id) {
+            const playlist = await PlayList.findById(id);
+            if (playlist) {
+                const { titulo, descripcion } = req.body;
+                if (!titulo || titulo.length < 5) {
+                    console.log("PlaylistController | actualizarPlayList | Bad Request");
+                    res.status(422).json({ message: `El titulo es requerido` });
+                }
+                else if (!descripcion || descripcion.length < 10) {
+                    console.log("PlaylistController | actualizarPlayList | Bad Request");
+                    res.status(422).json({ message: `La descripcion es requerida` });
+                }
+                else {
+                    PlayList.findByIdAndUpdate(id,
+                        {
+                            "titulo": titulo,
+                            "descripcion": descripcion
+                        },
+                        { new: true },
+                        (err, result) => {
+                            if (err) { throw err };
+                            console.log("PlaylistController | actualizarPlayList | Success");
+                            res.status(200).json({ entity: result });
+                        });
+                }
+            } else {
+                console.log(`PlaylistController | actualizarPlayList | Not Found id: ${id}`)
+                res.status(404).json({ message: `No se encontró ninguna playlist con el id: ${id}` });
             }
-        );
-        console.log("Cambio realizado");
-        res.json({ operacion: "Correcta" });
+        } else {
+            console.log(`PlaylistController | actualizarPlayList | Not Found id: ${id}`)
+            res.status(422).json({ message: `El id es requerido para hacer la busqueda` });
+        }
     } catch (err) {
-        console.log(err);
-        res.json({ operacion: "Incorrecta" });
+        console.log(`PlaylistController | actualizarPlayList | ERROR: ${err}`);
+        res.status(500).json({ message: `Ocurrio un error al actualizar la playlist` });
     }
 }
 
 
-/*
-POST: localhost:8081/playlist/borrar
-{
-    "id_objetivo": "616e00a3d6e979e7c2f1a460"
-}
-*/
-exports.borrarPlayList = async (req, res) => {
+exports.eliminarPlayList = async (req, res) => {
     try {
-        await PlayList.findByIdAndRemove(req.body.id_objetivo);
-        console.log("PlayList Eliminada");
-        res.json({ operacion: "Correcta" });
+        const { id } = req.params
+        const cancion = await PlayList.findById(id);
+        if (id) {
+            if (cancion) {
+                await PlayList.findByIdAndRemove(id);
+                console.log("PlaylistController | eliminarPlayList | Success")
+                res.status(200).json({ entity: cancion });
+            } else {
+                console.log(`PlaylistController | eliminarPlayList | Not Found id: ${id}`)
+                res.status(404).json({ message: `No se encontró ninguna playlist con el id: ${id}` });
+            }
+        } else {
+            console.log(`PlaylistController | eliminarPlayList | Not Found id: ${id}`)
+            res.status(422).json({ message: `El id es requerido para hacer la búsqueda` });
+        }
     } catch (err) {
-        console.log(err);
-        res.json({ operacion: "Incorrecta" });
+        console.log(`PlaylistController | eliminarPlayList | ERROR: ${err.message}`);
+        res.status(500).json({ message: `Ocurrio un error al eliminar la playlist` });
     }
 }
 
@@ -236,7 +257,6 @@ exports.agregarElementosPlayList = async (req, res) => {
     }
     res.end();
 }
-
 
 
 /*
@@ -348,13 +368,3 @@ exports.quitarElementosPlayList = async (req, res) => {
         });
     }
 }
-
-
-/*
-
-Pendientes 18 Octubre:
-    - Validación de tipos de datos
-    - Validación en tamaño de los datos
-    - Validación en Json de actualiza (que existan los campos a modificar y que no se agreguen más en body)
-    - Validación en campos al crear
-*/

@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 
 //Definir esquema
 const PlayListSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     titulo: {
         type: String,
         minlength: [5, 'Min length is 5 characters'],

@@ -14,7 +14,7 @@ exports.agregarLibro = async (req, res) => {
     }
 }
 
-// GET: localhost:8081/libro/
+
 exports.obtenerLibros = async (req, res) => {
     try {
         const libros = await Libro.find();
@@ -26,7 +26,7 @@ exports.obtenerLibros = async (req, res) => {
     }
 }
 
-// GET: localhost:8081/libro/:id
+
 exports.obtenerLibro = async (req, res) => {
     try {
         const { id } = req.params;
@@ -45,6 +45,7 @@ exports.obtenerLibro = async (req, res) => {
         res.status(500).json({ message: `Ocurrio un error al obtener el libro` });
     }
 }
+
 
 exports.actualizarLibro = async (req, res) => {
     try {
@@ -79,9 +80,6 @@ exports.actualizarLibro = async (req, res) => {
 }
 
 
-/*
-POST: localhost:8081/libro/:id
-*/
 exports.eliminarLibro = async (req, res) => {
     try {
         const { id } = req.params
@@ -104,13 +102,3 @@ exports.eliminarLibro = async (req, res) => {
         res.status(500).json({ message: `Ocurrio un error al eliminar el libro` });
     }
 }
-
-
-/*
-
-Pendientes 18 Octubre:
-    - Validación de tipos de datos
-    - Validación en tamaño de los datos
-    - Validación en Json de actualiza (que existan los campos a modificar y que no se agreguen más en body)
-    - Validación en campos al crear
-*/
