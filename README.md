@@ -18,11 +18,10 @@ Si se desea cambiar el puerto este tomará la variable de entorno que se encuent
 
 
 La ruta base del servicio es ***http://54.173.202.133*** para cada ruta de ejemplo se tomará esta ruta como como {{base}}
-***
+
 </br>
 
 ## Libros
-</br>
 
 ### Obtener todos los libros
 **`GET` Ruta:** `{{base}}/libro/`
@@ -203,9 +202,6 @@ La ruta base del servicio es ***http://54.173.202.133*** para cada ruta de ejemp
 
 ## Canciones
 
-***
-</br>
-
 ### Obtener todas las canciones
 **`GET` Ruta:** `{{base}}/cancion/`
 
@@ -254,7 +250,6 @@ La ruta base del servicio es ***http://54.173.202.133*** para cada ruta de ejemp
     "minutos": 4,
     "segundos": 12,
   }
-}
 }
 ```
 
@@ -408,6 +403,7 @@ La ruta base del servicio es ***http://54.173.202.133*** para cada ruta de ejemp
   "message": "No se encontró ninguna canción con el id: 617f9d79e49e516077293054"
 }
 ```
+
 </br>
 
 ## Playlists
