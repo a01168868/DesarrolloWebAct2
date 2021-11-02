@@ -1,13 +1,13 @@
 //RUTAS
-const router=require("express").Router();
-const playlistController=require("../controllers/playlist");
+const router = require("express").Router();
+const playlistController = require("../controllers/playlist");
 
-router.post('/agregar',playlistController.postAgregarPlayList);
-router.get("/obtenerTodo",playlistController.getObtenerPlayLists);
-router.get("/obtener/:id",playlistController.getObtenerPlayList);
-router.post("/actualizar",playlistController.postActualizarPlayList);
-router.post("/borrar",playlistController.postBorrarPlayList);
-router.post("/agregaElementos",playlistController.postAgregarElementosPlayList);
-router.post("/quitaElementos",playlistController.postQuitarElementosPlayList);
+router.post('/', playlistController.agregarPlayList);
+router.get("/", playlistController.obtenerPlayLists);
+router.get("/:id", playlistController.obtenerPlayList);
+router.put("/edit/:id", playlistController.actualizarPlayList);
+router.delete("/:id", playlistController.eliminarPlayList);
+router.post("/add", playlistController.agregarElementosPlayList);
+router.post("/remove", playlistController.quitarElementosPlayList);
 
-module.exports=router;
+module.exports = router;

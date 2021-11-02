@@ -1,20 +1,23 @@
 //Models
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 
 //Definir esquema
-const PlayListSchema=mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
-    titulo:{
-        type:String,
-        required:true
+const PlayListSchema = mongoose.Schema({
+    titulo: {
+        type: String,
+        minlength: [5, 'Min length is 5 characters'],
+        maxlength: [50, 'Max length is 50 characters'],
+        required: true
     },
-    descripcion:{
-        type:String,
-        required:true
+    descripcion: {
+        type: String,
+        minlength: [10, 'Min length is 10 characters'],
+        maxlength: [250, 'Max length is 250 characters'],
+        required: true
     },
-    canciones:[],
-    libros:[]
-},{collection:'playlist'});
+    canciones: [],
+    libros: []
+}, { collection: 'playlist' });
 
 //Crear modelo
-module.exports=mongoose.model('PlayList',PlayListSchema);
+module.exports = mongoose.model('PlayList', PlayListSchema);

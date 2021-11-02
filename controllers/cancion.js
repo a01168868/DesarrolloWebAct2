@@ -1,113 +1,114 @@
-const Cancion=require("../models/cancion.js");
-const mongoose=require("mongoose");
-
-/*
-POST: localhost:8081/cancion/agregar
-{
-    "titulo": "Esta es la primera canción",
-    "descripcion": "Esta es una descripción de prueba ",
-    "autor": "Miguel Torres",
-    "genero": "Metalcore Compulsivo Vegetariano Obligatorio",
-    "anio": 2021,
-    "minutos": 4,
-    "segundos": 32
-}
-*/
-exports.postAgregarCancion=async(req,res)=>{
-    const cancion=new Cancion(req.body);
-    cancion._id=new mongoose.Types.ObjectId();
-    try{
-        //Agregar documento a la colección
-        await cancion.save();
-        console.log(cancion);
-        console.log("Canción Registrada");
-        res.send({operacion:"Correcta"});
-    }catch(err){
-        console.log(err);
-        res.send({operacion:"Incorrecta :("});
-    }
-}
-
-// GET: localhost:8081/cancion/obtenerTodo
-exports.getObtenerCanciones=async(req,res)=>{
-    const cancion=await Cancion.find();
-    console.log(cancion);
-    res.json(cancion);
-}
-
-// GET: localhost:8081/cancion/obtener/616df9c1bc51f241c7869426
-exports.getObtenerCancion=async(req,res)=>{
-    try{
-        const cancion=await Cancion.findById(req.params.id);
-        console.log("FindById Exitoso");
-        res.json(cancion);
-    }catch(err){
-        console.log(err);
-        res.json({operacion: "Incorrecta"});
-    }
-}
+const Cancion = require("../models/cancion");
 
 
-/*
-POST: localhost:8081/cancion/actualizar
-{
-    "id_objetivo": "616e00a3d6e979e7c2f1a460",
-    "titulo": "Canción modificada",
-    "descripcion": "Esta es una descripción de prueba con descripción modificada :D",
-    "autor": "Miguel Torres",
-    "genero": "Metalcore Compulsivo Vegetariano Obligatorio Repulsivo",
-    "anio": 2020,
-    "minutos": 2,
-    "segundos": 45
-}
-*/
-exports.postActualizarCancion=async(req,res)=>{
-    try{
-        await Cancion.findByIdAndUpdate(req.body.id_objetivo,
-            {
-                "titulo"         :      req.body.titulo,
-                "descripcion"    :      req.body.descripcion,
-                "autor"          :      req.body.autor,
-                "genero"         :      req.body.genero,
-                "anio"           :      req.body.anio,
-                "minutos"        :      req.body.minutos,
-                "segundos"       :      req.body.segundos
+exports.agregarCancion = async (req, res) => {
+    try {
+        const cancion = new Cancion(req.body);
+        await cancion.save(function (err, result) {
+            if (err) throw err;
+            if (result) {
+                console.log("CancionController | agregarCancion | Success | Entity:", result);
+                res.status(200).json({ entity: result });
             }
-        );
-        console.log("Cambio realizado");
-        res.json({operacion: "Correcta"});
-    }catch(err){
-        console.log(err);
-        res.json({operacion: "Incorrecta"});
+        });
+    } catch (err) {
+        console.log(`CancionController | agregarCancion | ERROR: ${err}`);
+        res.status(500).json({ message: `Ocurrio un error al crear la canción` });
     }
 }
 
 
-/*
-POST: localhost:8081/cancion/borrar
-{
-    "id_objetivo": "616e00a3d6e979e7c2f1a460"
-}
-*/
-exports.postBorrarCancion=async(req,res)=>{
-    try{
-        await Cancion.findByIdAndRemove(req.body.id_objetivo);
-        console.log("Canción Eliminada");
-        res.json({operacion: "Correcta"});
-    }catch(err){
-        console.log(err);
-        res.json({operacion: "Incorrecta"});
+exports.obtenerCanciones = async (req, res) => {
+    try {
+        const canciones = await Cancion.find();
+        console.log("CancionController | obtenerCanciones | Success");
+        res.status(200).json({ Canciones: canciones });
+    } catch (err) {
+        console.log(`CancionController | obtenerCanciones | ERROR: ${err}`);
+        res.status(500).json({ message: `Ocurrio un error al obtener las canciones` });
     }
 }
 
 
+exports.obtenerCancion = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (id) {
+            const cancion = await Cancion.findById(id);
+            if (cancion) {
+                console.log("CancionController | obtenerCancion | Success");
+                res.status(200).json({ entity: cancion });
+            } else {
+                res.status(404).json({ message: `No se encontró ninguna cancion con el id: ${id}` });
+            }
+        } else {
+            res.status(422).json({ message: `El id es requerido para hacer la busqueda` });
+        }
+    } catch (err) {
+        console.log(`CancionController | obtenerCancion | ERROR: ${err.message}`);
+        res.status(500).json({ message: `Ocurrio un error al obtener la cancion` });
+    }
+}
 
 
-/*
+exports.actualizarCancion = async (req, res) => {
+    try {
+        const { id } = req.params
+        if (id) {
+            const cancion = await Cancion.findById(id);
+            if (cancion) {
+                Cancion.findByIdAndUpdate(id,
+                    {
+                        "titulo": req.body.titulo,
+                        "autor": req.body.autor,
+                        "album": req.body.album,
+                        "genero": req.body.genero,
+                        "anio": req.body.anio,
+                        "minutos": req.body.minutos,
+                        "segundos": req.body.segundos
+                    },
+                    { new: true },
+                    (err, result) => {
+                        if (err) {
+                            throw err;
+                        };
+                        console.log("CancionController | actualizarCancion | Success");
+                        res.status(200).json({ entity: result });
+                    });
+            } else {
+                console.log(`CancionController | actualizarCancion | Not Found id: ${id}`)
+                res.status(404).json({ message: `No se encontró ninguna canción con el id: ${id}` });
+            }
+        } else {
+            console.log(`CancionController | actualizarCancion | Not Found id: ${id}`)
+            res.status(422).json({ message: `El id es requerido para hacer la busqueda` });
+        }
+    } catch (err) {
+        console.log(`CancionController | actualizarCancion | ERROR: ${err}`);
+        res.status(500).json({ message: `Ocurrio un error al actualizar la cancion` });
+    }
+}
 
-Pendientes 18 Octubre:
-    - Validación de tipos de datos
-    - Validación en tamaño de los datos
-    - Validación en Json de actualiza (que existan los campos a modificar y que no se agreguen más en body)
-    - Validación en campos al crear
-*/
+
+exports.eliminarCancion = async (req, res) => {
+    try {
+        const { id } = req.params
+        const cancion = await Cancion.findById(id);
+        if (id) {
+            if (cancion) {
+                await Cancion.findByIdAndRemove(id);
+                console.log("CancionController | eliminarCancion | Success")
+                res.status(200).json({ entity: cancion });
+            } else {
+                console.log(`CancionController | eliminarCancion | Not Found id: ${id}`)
+                res.status(404).json({ message: `No se encontró ninguna canción con el id: ${id}` });
+            }
+        } else {
+            console.log(`CancionController | eliminarCancion | Not Found id: ${id}`)
+            res.status(422).json({ message: `El id es requerido para hacer la búsqueda` });
+        }
+    } catch (err) {
+        console.log(`CancionController | eliminarCancion | ERROR: ${err.message}`);
+        res.status(500).json({ message: `Ocurrio un error al eliminar la canción` });
+    }
+}

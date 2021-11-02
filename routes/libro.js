@@ -1,12 +1,12 @@
 //RUTAS
-const router=require("express").Router();
-const libroController=require("../controllers/libro");
+const router = require("express").Router();
+const libroController = require("../controllers/libro");
 
-router.post('/agregar',libroController.postAgregarLibro);
-router.get("/obtenerTodo",libroController.getObtenerLibros);
-router.get("/obtener/:id",libroController.getObtenerLibro);
-router.post("/actualizar",libroController.postActualizarLibro);
-router.post("/borrar",libroController.postBorrarLibro);
+router.post('/', libroController.agregarLibro);
+router.get("/", libroController.obtenerLibros);
+router.get("/:id", libroController.obtenerLibro);
+router.put("/edit/:id", libroController.actualizarLibro);
+router.delete("/:id", libroController.eliminarLibro);
 
 
-module.exports=router;
+module.exports = router;
