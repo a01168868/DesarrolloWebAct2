@@ -148,12 +148,12 @@ exports.actualizarPlayList = async (req, res) => {
 exports.eliminarPlayList = async (req, res) => {
     try {
         const { id } = req.params
-        const cancion = await PlayList.findById(id);
+        const playlist = await PlayList.findById(id);
         if (id) {
-            if (cancion) {
+            if (playlist) {
                 await PlayList.findByIdAndRemove(id);
                 console.log("PlaylistController | eliminarPlayList | Success")
-                res.status(200).json({ entity: cancion });
+                res.status(200).json({ entity: playlist });
             } else {
                 console.log(`PlaylistController | eliminarPlayList | Not Found id: ${id}`)
                 res.status(404).json({ message: `No se encontró ninguna playlist con el id: ${id}` });
@@ -194,68 +194,63 @@ POST: localhost:8081/playlist/agregaElementos
 //Permite duplicados (hay canciones que quiero escuchar +2 veces)
 //Los nuevos elementos son agregados al final de canciones o libros
 exports.agregarElementosPlayList = async (req, res) => {
-    const el = req.body.elementos;
-    const error = 0;
-    var canciones = [];
-    var cancionesAr = [];
-    var libros = [];
-    var librosAr = [];
-    var playlist = {};
-    //Obtiene los elementos existentes
     try {
-        playlist = await PlayList.findById(req.body.id_objetivo);
-        //console.log(playlist.canciones);
-    } catch (err) {
-        console.log(err);
-        res.json({ operacion: "Incorrecta" });
-    }
+        const { id } = req.params;
+        const playlist = await PlayList.findById(id);
+        if (playlist) {
+            const { elementos } = req.body;
+            if (elementos && elementos.length > 0) {
+                let canciones = new Set();
+                let libros = new Set();
 
-    //Crea los elementos nuevos
-    try {
-        for (let i = 0; i < el.length; i++) {
-            if (el[i].tipo == "Canción") {
-                canciones = await Cancion.find({ _id: { $in: el[i]._id } });
-                cancionesAr = cancionesAr.concat(
-                    Object.keys(canciones).map(key => canciones[key])
-                );
-            } else if (el[i].tipo == "Libro") {
-                libros = await Libro.find({ _id: { $in: el[i]._id } });
-                librosAr = librosAr.concat(
-                    Object.keys(libros).map(key => libros[key])
-                );
-            } else {
-                error = 1;
-            }
-        }
-    } catch (err) {
-        console.log(err);
-        error = 1;
-        res.json({ operacion: "Incorrecta" });
-    }
+                elementos.forEach(item => {
+                    if (item.tipo.toLowerCase() === "canción" || item.tipo.toLowerCase === "cancion") {
+                        canciones.add(item._id);
+                    }
+                    else if (item.tipo.toLowerCase() === "libro") {
+                        libros.add(item._id);
+                    }
+                });
 
-    cancionesAr = (playlist.canciones).concat(cancionesAr);
-    librosAr = (playlist.libros).concat(librosAr);
-    //Guarda los viejos con los nuevos
-    if (error == 0 && (cancionesAr.length > 0 || librosAr.length > 0)) {
-        try {
-            await PlayList.findByIdAndUpdate(req.body.id_objetivo,
-                {
-                    "canciones": cancionesAr,
-                    "libros": librosAr
+                if (canciones.size > 0 || canciones.size > 0) {
+                    if (canciones.size > 0) {
+                        const nuevasCanciones = await Cancion.find({ '_id': { $in: Array.from(canciones) } });
+                        if (nuevasCanciones && nuevasCanciones.length > 0) {
+                            playlist.canciones.push(nuevasCanciones);
+                        }
+                    }
+
+                    if (libros.size > 0) {
+                        const nuevosLibros = await Libro.find({ '_id': { $in: Array.from(libros) } });
+                        if (nuevosLibros && nuevosLibros.length > 0) {
+                            playlist.libros.push(nuevosLibros);
+                        }
+                    }
+
+                    await playlist.save((err, result) => {
+                        if (err) {
+                            console.error("Update elements of playlist", err);
+                            throw err;
+                        };
+                        console.log("PlaylistController | agregarElementosPlayList | Success");
+                        res.status(200).json({ entity: result });
+                    })
+                } else {
+                    console.log(`PlaylistController | agregarElementosPlayList | Success | Without changes`);
+                    res.status(200).json({ entity: playlist });
                 }
-            );
-            console.log("Cambio realizado");
-            res.json({ operacion: "Correcta" });
-        } catch (err) {
-            console.log(err);
-            res.json({ operacion: "Incorrecta" });
+            } else {
+                console.log(`PlaylistController | agregarElementosPlayList | Bad Request`);
+                res.status(400).json({ message: "No se encontraron elementos en el request" });
+            }
+        } else {
+            console.log(`PlaylistController | agregarElementosPlayList | NotFound`);
+            res.status(404).json({ message: `No se enocntró la plylist con id:${id}` });
         }
-
-
-    } else {
-        res.json({ operacion: "Incorrecta" });
+    } catch (err) {
+        console.log(`PlaylistController | agregarElementosPlayList | ERROR: ${err.message}`);
+        res.status(500).json({ message: `Ocurrio un error al eliminar la canción` });
     }
-    res.end();
 }
 
 
@@ -291,7 +286,8 @@ exports.quitarElementosPlayList = async (req, res) => {
     var error = 0;
     //Obtiene los elementos existentes
     try {
-        playlist = await PlayList.findById(req.body.id_objetivo);
+        const { id } = req.params;
+        playlist = await PlayList.findById(id);
     } catch (err) { //¿Cómo seguir con este tipo de error? Intentar con un id de playlist inválido
         error = 1;
         console.log(err);
