@@ -1,8 +1,6 @@
 const PlayList = require("../models/playlist.js");
 const Cancion = require("../models/cancion.js");
 const Libro = require("../models/libro.js");
-const { ObjectId } = require('mongodb');
-
 
 exports.obtenerPlayLists = async (req, res) => {
     try {
@@ -101,7 +99,7 @@ exports.agregarPlayList = async (req, res) => {
 
 exports.actualizarPlayList = async (req, res) => {
     try {
-        const { id } = req.params
+        const { id } = req.params;
         if (id) {
             const playlist = await PlayList.findById(id);
             if (playlist) {
