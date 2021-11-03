@@ -2,11 +2,18 @@ const Libro = require("../models/libro.js");
 
 
 exports.agregarLibro = async (req, res) => {
-    const libro = new Libro(req.body);
+    const { titulo, descripcion, autor, genero,  anio, paginas } = req.body;
+    const libro = new Libro({
+        titulo,
+        descripcion,
+        autor,
+        genero,
+        anio,
+        paginas
+    });
     try {
         await libro.save();
-        console.log(libro);
-        console.log("Libro Registrado");
+        console.log(`LibroController | agregarLibro | Success`);
         res.status(200).json({ entity: libro });
     } catch (err) {
         console.log(err);

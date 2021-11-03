@@ -1,14 +1,14 @@
 const Cancion = require("../models/cancion");
 
 
-exports.agregarCancion = async (req, res) => {
+exports.agregarCancion = async (req, res, next) => {
     try {
         const cancion = new Cancion(req.body);
         await cancion.save(function (err, result) {
             if (err) throw err;
             if (result) {
                 console.log("CancionController | agregarCancion | Success | Entity:", result);
-                res.status(200).json({ entity: result });
+                res.json({ entity: result });
             }
         });
     } catch (err) {
