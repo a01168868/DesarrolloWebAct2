@@ -1,11 +1,12 @@
 //RUTAS
-const router=require("express").Router();
-const cancionController=require("../controllers/cancion");
+const router = require("express").Router();
+const cancionController = require("../controllers/cancion");
+const Validator = require('../middlewares/Validator');
 
-router.post('/',cancionController.agregarCancion);
-router.get("/",cancionController.obtenerCanciones);
-router.get("/:id",cancionController.obtenerCancion);
-router.put("/edit/:id",cancionController.actualizarCancion);
-router.delete("/:id",cancionController.eliminarCancion);
+router.post('/', Validator('cancion'), cancionController.agregarCancion);
+router.get("/", cancionController.obtenerCanciones);
+router.get("/:id", cancionController.obtenerCancion);
+router.put("/edit/:id", Validator('cancion'), cancionController.actualizarCancion);
+router.delete("/:id", cancionController.eliminarCancion);
 
-module.exports=router;
+module.exports = router;
