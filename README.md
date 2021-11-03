@@ -17,7 +17,7 @@ npm start
 Si se desea cambiar el puerto este tomará la variable de entorno que se encuentre asignada a PORT en este caso el puerto asignado es el 8081
 
 
-La ruta base del servicio es ***http://54.173.202.133*** para cada ruta de ejemplo se tomará esta ruta como como {{base}}
+La ruta base del servicio es ***http://54.173.202.133:8081*** para cada ruta de ejemplo se tomará esta ruta como como {{base}}
 
 </br>
 
