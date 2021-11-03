@@ -6,7 +6,7 @@ const Validator = require('../middlewares/Validator');
 router.post('/', Validator('libro'), libroController.agregarLibro);
 router.get("/", libroController.obtenerLibros);
 router.get("/:id", libroController.obtenerLibro);
-router.put("/edit/:id", libroController.actualizarLibro);
+router.put("/edit/:id", Validator('libro'), libroController.actualizarLibro);
 router.delete("/:id", libroController.eliminarLibro);
 
 

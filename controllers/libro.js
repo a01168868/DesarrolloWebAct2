@@ -1,20 +1,20 @@
 const Libro = require("../models/libro.js");
 
 
-exports.agregarLibro = async (req, res) => {
-    const { titulo, descripcion, autor, genero,  anio, paginas } = req.body;
-    const libro = new Libro({
-        titulo,
-        descripcion,
-        autor,
-        genero,
-        anio,
-        paginas
-    });
+exports.agregarLibro = async (req, res, next) => {
+    const libro = new Libro(req.body);
     try {
-        await libro.save();
-        console.log(`LibroController | agregarLibro | Success`);
-        res.status(200).json({ entity: libro });
+        await libro.save((err, result) => {
+            if (err) {
+                console.error(err);
+                throw err;
+            }
+            if (result) {
+                console.log(`LibroController | agregarLibro | Success`);
+                res.status(200).json({ entity: result });
+            }
+        });
+        
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Ocurrió un error al intenar crear el libro" });
@@ -25,10 +25,10 @@ exports.agregarLibro = async (req, res) => {
 exports.obtenerLibros = async (req, res) => {
     try {
         const libros = await Libro.find();
-        console.log(`LibroController | obtenerLibros | Success`);
+        console.info(`LibroController | obtenerLibros | Success`);
         res.status(200).json({ Libros: libros });
     } catch (err) {
-        console.log(`LibroController | obtenerLibros | ERROR: ${err.message}`);
+        console.error(`LibroController | obtenerLibros | ERROR: ${err.message}`);
         res.status(500).json({ message: `Ocurrio un error al obtener los libros` });
     }
 }
@@ -40,15 +40,17 @@ exports.obtenerLibro = async (req, res) => {
         if (id) {
             const libro = await Libro.findById(id);
             if (libro) {
+                console.info(`LibroController | obtenerLibro | Success`);
                 res.status(200).json({ entity: libro });
             } else {
+                console.error(`LibroController | obtenerLibro | Not Found`);
                 res.status(404).json({ message: `No se encontró ningún libro con el id: ${id}` });
             }
         } else {
             res.status(422).json({ message: `El id es requerido para hacer la busqueda` });
         }
     } catch (err) {
-        console.log(`LibroController | getObtenerLibro | ERROR: ${err.message}`);
+        console.error(`LibroController | getObtenerLibro | ERROR: ${err.message}`);
         res.status(500).json({ message: `Ocurrio un error al obtener el libro` });
     }
 }
@@ -60,28 +62,27 @@ exports.actualizarLibro = async (req, res) => {
         if (id) {
             const libro = await Libro.findById(id);
             if (libro) {
-                await Libro.findByIdAndUpdate(id,
-                    {
-                        "titulo": req.body.titulo,
-                        "descripcion": req.body.descripcion,
-                        "autor": req.body.autor,
-                        "genero": req.body.genero,
-                        "anio": req.body.anio,
-                        "paginas": req.body.paginas
-                    }
-                );
-                const libroActualizado = await Libro.findById(id);
-                res.status(200).json({ entity: libroActualizado });
+                Libro.findByIdAndUpdate(id, 
+                    req.body,
+                    { new: true },
+                    (err, result) => {
+                        if (err) {
+                            console.error(err);
+                            throw err;
+                        }
+                        console.info(`LibroController | actualizarLibro | Success`);
+                        res.status(200).json({ entity: result });
+                    });
             } else {
                 console.log(`LibroController | actualizarLibro | Not Found id: ${id}`)
                 res.status(404).json({ message: `No se encontró ningún libro con el id: ${id}` });
             }
         } else {
-            console.log(`LibroController | actualizarLibro | Not Found id: ${id}`)
-            res.status(422).json({ message: `El id es requerido para hacer la busqueda` });
+            console.error(`LibroController | actualizarLibro | Bad Request`)
+            res.status(400).json({ message: `El id es requerido para hacer la busqueda` });
         }
     } catch (err) {
-        console.log(`LibroController | actualizarLibro | ERROR: ${err}`);
+        console.error(`LibroController | actualizarLibro | ERROR: ${err}`);
         res.status(500).json({ message: `Ocurrio un error al actualizar el libro` });
     }
 }

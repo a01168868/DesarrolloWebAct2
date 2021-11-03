@@ -7,7 +7,7 @@ exports.agregarCancion = async (req, res, next) => {
         await cancion.save(function (err, result) {
             if (err) throw err;
             if (result) {
-                console.log("CancionController | agregarCancion | Success | Entity:", result);
+                console.info("CancionController | agregarCancion | Success | Entity:", result);
                 res.json({ entity: result });
             }
         });
