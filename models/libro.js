@@ -28,10 +28,6 @@ const LibroSchema = mongoose.Schema({
     anio: Number,
 }, { collection: 'libro' });
 
-LibroSchema.pre('save', (next) => {
-    if (this.titulo && this.titulo.length >= 5 && this.titulo.length <= 50) {
 
-    }
-});
 //Crear modelo
 module.exports = mongoose.model('Libro', LibroSchema);
