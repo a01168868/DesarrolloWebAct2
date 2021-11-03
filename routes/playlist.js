@@ -7,7 +7,7 @@ router.get("/", playlistController.obtenerPlayLists);
 router.get("/:id", playlistController.obtenerPlayList);
 router.put("/edit/:id", playlistController.actualizarPlayList);
 router.delete("/:id", playlistController.eliminarPlayList);
-router.post("/add", playlistController.agregarElementosPlayList);
-router.post("/remove", playlistController.quitarElementosPlayList);
+router.post("/:id/add", playlistController.agregarElementosPlayList);
+router.post("/:id/remove", playlistController.removerElementosPlayList);
 
 module.exports = router;
